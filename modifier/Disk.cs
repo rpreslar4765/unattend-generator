@@ -60,7 +60,7 @@ public record class GeneratePESettings(
   bool PauseBeforeReboot
 ) : ICmdPESettings;
 
-public record class ScriptPESetttings(
+public record class ScriptPESettings(
   string Script
 ) : ICmdPESettings;
 
@@ -88,7 +88,7 @@ class DiskModifier(ModifierContext context) : Modifier(context)
 
     switch (Configuration.PESettings)
     {
-      case ScriptPESetttings peSettings:
+      case ScriptPESettings peSettings:
         WritePeScript(Util.SplitLines(peSettings.Script));
         break;
 
