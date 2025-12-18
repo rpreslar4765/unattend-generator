@@ -50,7 +50,7 @@ class PersonalizationModifier(ModifierContext context) : Modifier(context)
     {
       if (Configuration.ColorSettings is CustomColorSettings settings)
       {
-        string ps1File = AddTextFile("SetColorTheme.ps1", before: writer =>
+        string ps1File = EmbedTextFileFromResource("SetColorTheme.ps1", before: writer =>
         {
           writer.WriteLine($"""
             $lightThemeSystem = {settings.SystemTheme:D};
@@ -68,7 +68,7 @@ class PersonalizationModifier(ModifierContext context) : Modifier(context)
     {
       void WriteWallpaperScript(Action<StringWriter> after)
       {
-        string ps1File = AddTextFile("SetWallpaper.ps1", after: after);
+        string ps1File = EmbedTextFileFromResource("SetWallpaper.ps1", after: after);
         UserOnceScript.InvokeFile(ps1File);
       }
 
@@ -76,10 +76,10 @@ class PersonalizationModifier(ModifierContext context) : Modifier(context)
       {
         case ScriptWallpaperSettings settings:
           string imageFile = @"C:\Windows\Setup\Scripts\Wallpaper";
-          string getterFile = AddTextFile("GetWallpaper.ps1", settings.Script);
+          string getterFile = EmbedTextFile("GetWallpaper.ps1", settings.Script);
           SpecializeScript.Append($$"""
             try {
-              $bytes = Get-Content -LiteralPath '{{getterFile}}' -Raw | Invoke-Expression;
+              $bytes = & '{{getterFile}}';
               [System.IO.File]::WriteAllBytes( '{{imageFile}}', $bytes );
             } catch {
               $_;
@@ -104,10 +104,10 @@ class PersonalizationModifier(ModifierContext context) : Modifier(context)
       {
         case ScriptLockScreenSettings settings:
           string imageFile = @"C:\Windows\Setup\Scripts\LockScreenImage";
-          string getterFile = AddTextFile("GetLockScreenImage.ps1", settings.Script);
+          string getterFile = EmbedTextFile("GetLockScreenImage.ps1", settings.Script);
           SpecializeScript.Append($$"""
             try {
-              $bytes = Get-Content -LiteralPath '{{getterFile}}' -Raw | Invoke-Expression;
+              $bytes = & '{{getterFile}}';
               [System.IO.File]::WriteAllBytes( '{{imageFile}}', $bytes );
               reg.exe add "HKLM\Software\Microsoft\Windows\CurrentVersion\PersonalizationCSP" /v LockScreenImagePath /t REG_SZ /d "{{imageFile}}" /f;
             } catch {

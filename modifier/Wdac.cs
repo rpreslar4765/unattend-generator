@@ -130,10 +130,10 @@ class WdacModifier(ModifierContext context) : Modifier(context)
           } catch {
             $_;
           }
-        ) *>&1 | Out-String -Stream >> 'C:\Windows\Setup\Scripts\Wdac.log';
+        ) *>&1 | Out-String -Width 1KB -Stream >> 'C:\Windows\Setup\Scripts\Wdac.log';
         """);
 
-      string ps1File = AddTextFile("Wdac.ps1", sw.ToString());
+      string ps1File = EmbedTextFile("Wdac.ps1", sw.ToString());
       SpecializeScript.InvokeFile(ps1File);
     }
     else
